@@ -1,0 +1,6 @@
+version: "1"
+services:
+  frontend:
+    build:
+      context: ./udagram-frontend
+    image: udagram-frontend:local

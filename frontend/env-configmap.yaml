@@ -3,9 +3,7 @@ kind: ConfigMap
 metadata:
   name: configuration-values
 data:
-  POSTGRES_HOST: udacity-project3.cvwwihqohmgr.us-east-1.rds.amazonaws.com
-  POSTGRES_DB: postgres
-  AWS_BUCKET: udacity-project3-1
+  AWS_BUCKET: udacity-final
   AWS_REGION: us-east-1
   AWS_PROFILE: default
-  URL: http://localhost:8100
+  URL: http://localhost:3000

@@ -1,6 +1,6 @@
 version: "1"
 services:
   frontend:
-    image: udagram-frontend:local
+    image: todo-frontend:local
     ports:
       - "8100:80"

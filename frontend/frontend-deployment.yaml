@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: udagram-frontend
-  name: udagram-frontend
+    service: todo-frontend
+  name: todo-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: udagram-frontend
+      service: todo-frontend
   template:
     metadata:
       labels:
-        service: udagram-frontend
+        service: todo-frontend
         api: external
     spec:
       containers:
-        - image: hungnguyen101196/udagram-frontend:v1
-          name: udagram-frontend
+        - image: hungnguyen101196/todo-frontend:v2
+          name: todo-frontend
           imagePullPolicy: Always
           ports:
             - containerPort: 80

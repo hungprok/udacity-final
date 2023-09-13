@@ -2,5 +2,5 @@ version: "1"
 services:
   frontend:
     build:
-      context: ./udagram-frontend
-    image: udagram-frontend:local
+      context: ./
+    image: todo-frontend:local

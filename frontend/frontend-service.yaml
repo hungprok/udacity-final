@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: udagram-frontend
+  name: todo-frontend
   labels:
-    app: udagram-frontend
+    app: todo-frontend
 spec:
   ports:
     - port: 8100
       targetPort: 80
       protocol: TCP
   selector:
-    app: udagram-frontend
+    app: todo-frontend

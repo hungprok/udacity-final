@@ -16,7 +16,7 @@ spec:
         api: external
     spec:
       containers:
-        - image: hungnguyen101196/todo-frontend:v2
+        - image: hungnguyen101196/todo-frontend:v3
           name: todo-frontend
           imagePullPolicy: Always
           ports:

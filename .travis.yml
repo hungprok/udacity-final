@@ -12,11 +12,11 @@ install:
 before_script:
   - echo "no tests"
 script:
-  - docker build -t udagram-frontend ./udagram-frontend
+  - docker build -t todo-frontend ./frontend
 
   # Tagging
-  - docker tag udagram-frontend hungnguyen101196/udagram-frontend:v1
+  - docker tag todo-frontend hungnguyen101196/todo-frontend:v3
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push hungnguyen101196/udagram-frontend:v1
+  - docker push hungnguyen101196/todo-frontend:v3

@@ -2,7 +2,7 @@ This project has 2 parts: frontend and backend.
 
 ### FRONTEND
 Frontend is deployed on a EKS Cluster using docker and container approach.
-URL: http://a88579c3570a342d98b9669162e0526f-732560657.us-east-1.elb.amazonaws.com/
+URL: http://a8016f08943a846719270f5a3617dd1b-1572344969.us-east-1.elb.amazonaws.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -44,7 +44,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## BACKEND
 Backend is a serverless service using lamda functions
-URL: https://guwjtxuc9i.execute-api.us-east-1.amazonaws.com/dev
+URL: https://3gry4yekm3.execute-api.us-east-1.amazonaws.com/dev
 
 # Serverless TODO
 

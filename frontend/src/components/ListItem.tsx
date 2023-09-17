@@ -112,11 +112,6 @@ export class ListItem extends React.PureComponent<ItemsProps, ItemsState> {
     })
     try {
       const item = this.state.items[pos]
-      // this.setState({
-      //   items: update(this.state.items, {
-      //     [pos]: { sold: { $set: !item.sold } }
-      //   })
-      // })
       await patchItem(this.props.auth.getIdToken(), item.itemId, {
         name: item.name,
         sold: !item.sold,

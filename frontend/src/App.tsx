@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { Link, Route, Router, Switch } from 'react-router-dom'
-import { Grid, Menu, Segment } from 'semantic-ui-react'
+import { Route, Router, Switch } from 'react-router-dom'
+import { Menu } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
-import { EditTodo } from './components/EditTodo'
+import { EditItem } from './components/EditItem'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
-import { Todos } from './components/Todos'
+import { ListItem } from './components/ListItem'
 
 export interface AppProps {}
 
@@ -35,55 +35,57 @@ export default class App extends Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
-        <Segment style={{ padding: '8em 0em' }} vertical>
-          <Grid container stackable verticalAlign="middle">
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <Router history={this.props.history}>
-                  {this.generateMenu()}
-
-                  {this.generateCurrentPage()}
-                </Router>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
+      <div className="main-content">
+        <Router history={this.props.history}>
+          {this.generateMenu()}
+          {this.generateCurrentPage()}
+        </Router>
       </div>
     )
   }
 
   generateMenu() {
-    return (
-      <Menu>
-        <Menu.Item name="home">
-          <Link to="/">Home</Link>
-        </Menu.Item>
-
-        <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
-      </Menu>
-    )
-  }
-
-  logInLogOutButton() {
     if (this.props.auth.isAuthenticated()) {
       return (
-        <Menu.Item name="logout" onClick={this.handleLogout}>
-          Log Out
-        </Menu.Item>
-      )
-    } else {
-      return (
-        <Menu.Item name="login" onClick={this.handleLogin}>
-          Log In
-        </Menu.Item>
+        <div className="row justify-content-end mx-1">
+          <div className="col-1">
+            <div className="row justify-content-end">
+              <button
+                className="btn btn-primary mb-2 br-2"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseExample"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                Add new item
+              </button>
+            </div>
+          </div>
+          <div className="col-10"></div>
+          <div className="col-1">
+            <div className="row justify-content-end">
+              <button
+                className="btn btn-danger mb-2"
+                name="logout"
+                onClick={this.handleLogout}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       )
     }
   }
 
   generateCurrentPage() {
     if (!this.props.auth.isAuthenticated()) {
-      return <LogIn auth={this.props.auth} />
+      return (
+        <div className="login-card">
+          <LogIn auth={this.props.auth} />{' '}
+        </div>
+      )
     }
 
     return (
@@ -92,15 +94,15 @@ export default class App extends Component<AppProps, AppState> {
           path="/"
           exact
           render={(props) => {
-            return <Todos {...props} auth={this.props.auth} />
+            return <ListItem {...props} auth={this.props.auth} />
           }}
         />
 
         <Route
-          path="/todos/:todoId/edit"
+          path="/item/:itemId/edit"
           exact
           render={(props) => {
-            return <EditTodo {...props} auth={this.props.auth} />
+            return <EditItem {...props} auth={this.props.auth} />
           }}
         />
 

@@ -1,6 +1,6 @@
 version: "1"
 services:
   frontend:
-    image: todo-frontend:local
+    image: udacity-final-frontend:local
     ports:
       - "8100:80"

@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: todo-frontend
-  name: todo-frontend
+    service: udacity-final-frontend
+  name: udacity-final-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: todo-frontend
+      service: udacity-final-frontend
   template:
     metadata:
       labels:
-        service: todo-frontend
+        service: udacity-final-frontend
         api: external
     spec:
       containers:
-        - image: hungnguyen101196/todo-frontend:v3
-          name: todo-frontend
+        - image: hungnguyen101196/udacity-final-frontend:v4
+          name: udacity-final-frontend1
           imagePullPolicy: Always
           ports:
             - containerPort: 80

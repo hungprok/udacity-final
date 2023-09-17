@@ -4,15 +4,19 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as middy from "middy";
 import { cors } from "middy/middlewares";
 
-import { getTodoId } from "../../helpers/todos";
+import { getItemById } from "../../helpers/items";
 import { getUserId } from "../utils";
+import { createLogger } from "../../utils/logger";
+const logger = createLogger("getItemById");
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // Write your code here
-    const todoId = event.pathParameters.todoId;
+    const itemId = event.pathParameters.itemId;
+    logger.info(`userId: ${getUserId(event)} itemId: ", ${itemId}`
+    )
     try {
-      const todos = await getTodoId(getUserId(event), todoId);
+      const item = await getItemById(getUserId(event), itemId);
       return {
         statusCode: 200,
         headers: {
@@ -20,7 +24,7 @@ export const handler = middy(
           "Access-Control-Allow-Headers": "*"
         },
         body: JSON.stringify({
-          items: todos.Items,
+          item: item.Items ? item.Items[0] : {},
         }),
       };
     } catch (err) {

@@ -3,4 +3,4 @@ services:
   frontend:
     build:
       context: ./
-    image: todo-frontend:local
+    image: udacity-final-frontend:local

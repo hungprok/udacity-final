@@ -2,8 +2,8 @@ import * as AWS from "aws-sdk";
 import * as AWSXRay from "aws-xray-sdk";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { createLogger } from "../utils/logger";
-import { TodoItem } from "../models/TodoItem";
-import { TodoUpdate } from "../models/TodoUpdate";
+import { Item } from "../models/Item";
+import { ItemUpdate } from "../models/ItemUpdate";
 
 const client = new AWS.DynamoDB.DocumentClient({
   service: new AWS.DynamoDB({
@@ -14,20 +14,19 @@ const client = new AWS.DynamoDB.DocumentClient({
 
 AWSXRay.captureAWSClient((client as any).service);
 
-const logger = createLogger("TodosAccess");
+const logger = createLogger("ItemsAccess");
 
-export class TodosAccess {
+export class DbAccess {
   constructor(
     private readonly docClient: DocumentClient = client,
-    private readonly todosTable: string = process.env.TODOS_TABLE,
-    private readonly todosTableIndex: string = process.env
-      .TODOS_CREATED_AT_INDEX
-  ) {}
+    private readonly itemsTable: string = process.env.ITEMS_TABLE,
+    private readonly itemsTableIndex: string = process.env.ITEMS_CREATED_AT_INDEX
+  ) { }
 
-  async getTodoList(userId: string) {
+  async getItemList(userId: string) {
     const params = {
-      TableName: this.todosTable,
-      IndexName: this.todosTableIndex,
+      TableName: this.itemsTable,
+      IndexName: this.itemsTableIndex,
       KeyConditionExpression: "userId = :userId",
       ExpressionAttributeValues: {
         ":userId": userId,
@@ -37,8 +36,8 @@ export class TodosAccess {
     try {
       return await this.docClient.query(params).promise();
     } catch (err) {
-      logger.error("Unable to get ToDos from database", {
-        methodName: "todosAccess.getToDoList",
+      logger.error("Unable to get Items from database", {
+        methodName: "itemsAccess.getItemList",
         userId,
         error: err,
       });
@@ -46,70 +45,74 @@ export class TodosAccess {
     }
   }
 
-  async getTodoIdItem(todoId: string, userId: string) {
+  async getItemById(itemId: string, userId: string) {
     var params = {
-      TableName: this.todosTable,
-      Key: {
-        userId,
-        todoId,
+      TableName: this.itemsTable,
+      KeyConditionExpression: "userId = :userId AND itemId = :itemId",
+      ExpressionAttributeValues: {
+        ":userId": userId,
+        ":itemId": itemId
       },
     };
     try {
-      await this.docClient.query(params).promise();
+      return await this.docClient.query(params).promise();
     } catch (err) {
-      logger.error("Unable to delete ToDos in database", {
-        methodName: "todosAccess.deleteTodoItem",
-        todoId: todoId,
+      logger.error("Unable to getItemById in database", {
+        methodName: "itemsAccess.getItemById",
+        itemId: itemId,
         error: err,
       });
       return err;
     }
   }
 
-  async insertTodoItem(todoItem: TodoItem) {
+  async insertItem(item: Item) {
     let input = {
-      userId: todoItem.userId,
-      todoId: todoItem.todoId,
-      createdAt: todoItem.createdAt,
-      done: todoItem.done,
-      name: todoItem.name,
-      attachmentUrl: todoItem.attachmentUrl,
-      dueDate: todoItem.dueDate,
+      userId: item.userId,
+      itemId: item.itemId,
+      createdAt: item.createdAt,
+      sold: false,
+      name: item.name,
+      price: item.price,
+      description: item.description
     };
     const params: DocumentClient.PutItemInput = {
-      TableName: this.todosTable,
+      TableName: this.itemsTable,
       Item: input,
     };
 
     try {
       await this.docClient.put(params).promise();
     } catch (err) {
-      logger.error("Unable to insert ToDos into database", {
-        methodName: "todosAccess.insertTodoItem",
-        todoId: todoItem.todoId,
+      logger.error("Unable to insertItem into database", {
+        methodName: "itemsAccess.insertItem",
+        itemId: item.itemId,
         error: err,
       });
       return err;
     }
   }
 
-  async updateTodoItem(
-    todoId: string,
+  async updateItem(
+    itemId: string,
     userId: string,
-    updatedTodoItem: TodoUpdate
+    updatedItem: ItemUpdate
   ) {
+    const { name, soldDate, sold, description, price } = updatedItem
     const params = {
-      TableName: this.todosTable,
+      TableName: this.itemsTable,
       Key: {
-        todoId,
+        itemId,
         userId,
       },
-      UpdateExpression: "set #nm = :name, dueDate = :dueDate, done = :done",
+      UpdateExpression: "set #nm = :name, soldDate = :soldDate, sold = :sold, description = :description, price = :price",
       ExpressionAttributeNames: { "#nm": "name" },
       ExpressionAttributeValues: {
-        ":name": updatedTodoItem.name,
-        ":dueDate": updatedTodoItem.dueDate,
-        ":done": updatedTodoItem.done,
+        ":name": name,
+        ":soldDate": soldDate,
+        ":sold": sold,
+        ":description": description,
+        ":price": price
       },
     };
     try {
@@ -121,21 +124,21 @@ export class TodosAccess {
         })
         .promise();
     } catch (err) {
-      logger.error("Unable to update ToDos in database", {
-        methodName: "todosAccess.updateTodoItem",
-        todoId: todoId,
+      logger.error("Unable to updateItem in database", {
+        methodName: "itemsAccess.updateItem",
+        itemId: itemId,
         error: err,
       });
       return err;
     }
   }
 
-  async deleteTodoItem(todoId: string, userId: string) {
+  async deleteItem(itemId: string, userId: string) {
     var params = {
-      TableName: this.todosTable,
+      TableName: this.itemsTable,
       Key: {
         userId,
-        todoId,
+        itemId,
       },
     };
     try {
@@ -147,24 +150,24 @@ export class TodosAccess {
         })
         .promise();
     } catch (err) {
-      logger.error("Unable to delete ToDos in database", {
-        methodName: "todosAccess.deleteTodoItem",
-        todoId: todoId,
+      logger.error("Unable to deleteItem in database", {
+        methodName: "itemsAccess.deleteItem",
+        itemId: itemId,
         error: err,
       });
       return err;
     }
   }
 
-  async updateTodoItemAttachmentUrl(
-    todoId: string,
+  async updateItemAttachmentUrl(
+    itemId: string,
     userId: string,
     imageId: string
   ) {
     const params = {
-      TableName: this.todosTable,
+      TableName: this.itemsTable,
       Key: {
-        todoId,
+        itemId,
         userId,
       },
       UpdateExpression: "set attachmentUrl = :attachmentUrl",
@@ -181,9 +184,9 @@ export class TodosAccess {
         })
         .promise();
     } catch (err) {
-      logger.error("Unable to Todo attachmentUrl in database", {
-        methodName: "todosAccess.updateTodoItemAttachmentUrl",
-        todoId: todoId,
+      logger.error("Unable to updateItemAttachmentUrl in database", {
+        methodName: "itemsAccess.updateItemAttachmentUrl",
+        itemId: itemId,
         error: err,
       });
       return err;
